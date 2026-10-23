@@ -21,7 +21,7 @@ def test_migrated_postgres_and_auth_roundtrip():
     assert {"users", "auth_sessions", "login_attempts"}.issubset(
         set(inspector.get_table_names())
     )
-    unique_email = f"ci-{uuid4().hex}@example.test"
+    unique_email = f"ci-{uuid4().hex}@example.com"
     with TestClient(app) as client:
         result = client.post(
             "/api/v1/auth/register",
