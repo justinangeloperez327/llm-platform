@@ -42,6 +42,6 @@ export function findSample(id?: string): SampleConversation | undefined {
   return SAMPLE_CONVERSATIONS.find((item) => item.id === id);
 }
 
-export function draftKey(sampleId?: string): string {
-  return `llm-platform.draft.v1.${sampleId ?? "new"}`;
+export function draftKey(userId: string, sampleId?: string): string {
+  return `llm-platform.draft.v1.${userId}.${sampleId ?? "new"}`;
 }

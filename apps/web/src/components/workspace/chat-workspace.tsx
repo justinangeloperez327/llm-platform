@@ -5,6 +5,7 @@ import { ArrowUpRight, Check, FileText, Info, Save, Sparkles } from "lucide-reac
 import { Button } from "@/components/ui/button";
 import { draftKey, findSample } from "@/lib/samples";
 import { usePreferences } from "./preferences-provider";
+import { useAuthUser } from "@/components/auth/auth-boundary";
 
 const STARTERS = [
   "Explain the difference between RAG and fine-tuning",
@@ -31,7 +32,8 @@ function readDraft(key: string): string | null {
 
 export function ChatWorkspace({ sampleId }: { sampleId?: string }) {
   const sample = findSample(sampleId);
-  const key = draftKey(sample?.id);
+  const user = useAuthUser();
+  const key = draftKey(user.id, sample?.id);
 
   const [editedDraft, setEditedDraft] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);

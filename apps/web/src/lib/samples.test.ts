@@ -8,7 +8,8 @@ describe("sample conversation navigation", () => {
     expect(new Set(SAMPLE_CONVERSATIONS.map((x) => x.id)).size).toBe(SAMPLE_CONVERSATIONS.length);
   });
   it("keeps draft keys separate per conversation", () => {
-    expect(draftKey()).not.toBe(draftKey("rag"));
-    expect(draftKey("rag")).not.toBe(draftKey("routing"));
+    expect(draftKey("user1")).not.toBe(draftKey("user1", "rag"));
+    expect(draftKey("user1", "rag")).not.toBe(draftKey("user1", "routing"));
+    expect(draftKey("user1", "rag")).not.toBe(draftKey("user2", "rag"));
   });
 });

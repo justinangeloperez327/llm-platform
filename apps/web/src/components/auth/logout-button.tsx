@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import { LogOut } from "lucide-react";
+import { useAuthUser } from "./auth-boundary";
 
 export function LogoutButton() {
+  const user = useAuthUser();
   const [pending, setPending] = useState(false);
   async function logout() {
     if (pending) return;
@@ -15,6 +17,15 @@ export function LogoutButton() {
         cache: "no-store",
       });
       if (!result.ok) throw new Error("Logout failed");
+      try {
+        const prefix = `llm-platform.draft.v1.${user.id}.`;
+        for (let index = window.localStorage.length - 1; index >= 0; index--) {
+          const key = window.localStorage.key(index);
+          if (key?.startsWith(prefix)) window.localStorage.removeItem(key);
+        }
+      } catch {
+        // Private browsing restrictions must not block server-side logout.
+      }
       window.location.replace("/login");
     } catch {
       setPending(false);

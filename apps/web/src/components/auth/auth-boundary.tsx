@@ -1,8 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { type AuthUser } from "@/lib/auth";
+
+const AuthContext = createContext<AuthUser | null>(null);
+
+export function useAuthUser(): AuthUser {
+  const user = useContext(AuthContext);
+  if (!user) throw new Error("Verified auth context is required");
+  return user;
+}
 
 export function AuthBoundary({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -45,6 +53,6 @@ export function AuthBoundary({ children }: { children: React.ReactNode }) {
       </div>
     );
   }
-  return <>{children}</>;
+  return <AuthContext.Provider value={user}>{children}</AuthContext.Provider>;
 }
 

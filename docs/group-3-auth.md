@@ -42,7 +42,7 @@ Visit /register to create your first account, then /chat.
 - Cookie content never includes the password or user ID.
 - No email verification, password reset, MFA, organization roles or tenant data policies yet.
 - Group 4 owns additional entities, tenant authorization and resource policies. Group 5 owns model/chat integration.
-- Browser-local prompt drafts are not encrypted; do not store secrets in them. A logged-out browser retains old local drafts; authenticated data storage is future work.
+- Browser-local prompt drafts are not encrypted; do not store secrets in them. Draft keys are namespaced by authenticated user ID and this user's drafts are removed on successful logout. Authenticated database-backed draft storage is future work.
 - No OAuth or external providers enabled.
 - Database migrations are explicit; backend never silently creates tables at startup.
 
