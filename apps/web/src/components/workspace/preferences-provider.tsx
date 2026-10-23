@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useSyncExternalStore } from "react";
 import {
   DEFAULT_PREFERENCES,
   PREFERENCES_KEY,
@@ -16,38 +16,62 @@ interface PreferenceContextValue {
 }
 
 const PreferenceContext = createContext<PreferenceContextValue | null>(null);
+const CHANGE_EVENT = "llm-platform:preferences";
+
+function subscribe(callback: () => void) {
+  window.addEventListener("storage", callback);
+  window.addEventListener(CHANGE_EVENT, callback);
+  return () => {
+    window.removeEventListener("storage", callback);
+    window.removeEventListener(CHANGE_EVENT, callback);
+  };
+}
+
+function getSnapshot() {
+  try {
+    return window.localStorage.getItem(PREFERENCES_KEY);
+  } catch {
+    return null;
+  }
+}
+
+function getServerSnapshot() {
+  return null;
+}
 
 export function PreferencesProvider({ children }: { children: React.ReactNode }) {
-  const [preferences, setPreferences] = useState<Preferences>({ ...DEFAULT_PREFERENCES });
-  const [hydrated, setHydrated] = useState(false);
-
-  useEffect(() => {
-    try {
-      setPreferences(parsePreferences(window.localStorage.getItem(PREFERENCES_KEY)));
-    } catch {
-      setPreferences({ ...DEFAULT_PREFERENCES });
-    }
-    setHydrated(true);
-  }, []);
+  const stored = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  const preferences = useMemo(() => parsePreferences(stored), [stored]);
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", preferences.theme === "dark");
     document.documentElement.style.colorScheme = preferences.theme;
-    if (!hydrated) return;
+  }, [preferences.theme]);
+
+  const persist = useCallback((value: Preferences) => {
     try {
-      window.localStorage.setItem(PREFERENCES_KEY, JSON.stringify(preferences));
+      window.localStorage.setItem(PREFERENCES_KEY, JSON.stringify(value));
+      window.dispatchEvent(new Event(CHANGE_EVENT));
     } catch {
-      // Restricted browser storage should not break the interface.
+      // Browser storage can be unavailable; keep the shell functional.
     }
-  }, [preferences, hydrated]);
+  }, []);
+
+  const setPreference = useCallback(<K extends keyof Preferences>(
+    key: K, nextValue: Preferences[K],
+  ) => {
+    const latest = parsePreferences(getSnapshot());
+    persist({ ...latest, [key]: nextValue });
+  }, [persist]);
+
+  const reset = useCallback(() => persist({ ...DEFAULT_PREFERENCES }), [persist]);
 
   const value = useMemo<PreferenceContextValue>(() => ({
     preferences,
-    hydrated,
-    setPreference: (key, nextValue) =>
-      setPreferences((prev) => ({ ...prev, [key]: nextValue })),
-    reset: () => setPreferences({ ...DEFAULT_PREFERENCES }),
-  }), [preferences, hydrated]);
+    hydrated: true,
+    setPreference,
+    reset,
+  }), [preferences, setPreference, reset]);
 
   return <PreferenceContext.Provider value={value}>{children}</PreferenceContext.Provider>;
 }

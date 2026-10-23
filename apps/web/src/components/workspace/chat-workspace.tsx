@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useRef, useState } from "react";
+import { FormEvent, useCallback, useRef, useState, useSyncExternalStore } from "react";
 import { ArrowUpRight, Check, FileText, Info, Save, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { draftKey, findSample } from "@/lib/samples";
@@ -15,27 +15,36 @@ const STARTERS = [
 export function ChatWorkspace({ sampleId }: { sampleId?: string }) {
   const sample = findSample(sampleId);
   const key = draftKey(sample?.id);
-  const [draft, setDraft] = useState("");
+
+  const [editedDraft, setEditedDraft] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
-  const [storageReady, setStorageReady] = useState(false);
   const textarea = useRef<HTMLTextAreaElement>(null);
   const { preferences } = usePreferences();
 
-  useEffect(() => {
+  const subscribe = useCallback((listener: () => void) => {
+    window.addEventListener("storage", listener);
+    window.addEventListener("llm-platform:draft", listener);
+    return () => {
+      window.removeEventListener("storage", listener);
+      window.removeEventListener("llm-platform:draft", listener);
+    };
+  }, []);
+  const getSnapshot = useCallback(() => {
     try {
-      setDraft(window.localStorage.getItem(key) ?? "");
+      return window.localStorage.getItem(key);
     } catch {
-      setDraft("");
+      return null;
     }
-    setSaved(false);
-    setStorageReady(true);
   }, [key]);
+  const persistedDraft = useSyncExternalStore(subscribe, getSnapshot, () => null);
+  const draft = editedDraft ?? persistedDraft ?? "";
 
   function saveDraft(event?: FormEvent<HTMLFormElement>) {
     event?.preventDefault();
     if (!draft.trim()) return;
     try {
       window.localStorage.setItem(key, draft);
+      window.dispatchEvent(new Event("llm-platform:draft"));
       setSaved(true);
     } catch {
       setSaved(false);
@@ -43,7 +52,7 @@ export function ChatWorkspace({ sampleId }: { sampleId?: string }) {
   }
 
   function chooseStarter(prompt: string) {
-    setDraft(prompt);
+    setEditedDraft(prompt);
     setSaved(false);
     textarea.current?.focus();
   }
@@ -115,7 +124,7 @@ export function ChatWorkspace({ sampleId }: { sampleId?: string }) {
           maxLength={12000}
           rows={3}
           value={draft}
-          onChange={(event) => { setDraft(event.target.value); setSaved(false); }}
+          onChange={(event) => { setEditedDraft(event.target.value); setSaved(false); }}
           placeholder="Write a prompt to save for later..."
           aria-describedby="prompt-hint"
           className="block max-h-44 min-h-20 w-full resize-y rounded-lg bg-transparent px-2 py-2 text-sm leading-6 text-slate-900 outline-none placeholder:text-slate-400 focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-white dark:placeholder:text-slate-500"
@@ -123,9 +132,9 @@ export function ChatWorkspace({ sampleId }: { sampleId?: string }) {
         <div className="mt-2 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-3 dark:border-white/10">
           <div id="prompt-hint" className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
             <FileText className="size-4 shrink-0" aria-hidden="true" />
-            <span>{storageReady ? "Local draft only" : "Preparing local draft"} · {draft.length}/12000</span>
+            <span>Local draft only · {draft.length}/12000</span>
           </div>
-          <Button type="submit" disabled={!storageReady || !draft.trim()} className="gap-2">
+          <Button type="submit" disabled={!draft.trim()} className="gap-2">
             {saved ? <Check className="size-4" aria-hidden="true" /> : <Save className="size-4" aria-hidden="true" />}
             Save draft
           </Button>

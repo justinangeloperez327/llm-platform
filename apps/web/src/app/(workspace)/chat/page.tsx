@@ -8,5 +8,5 @@ export default async function ChatPage({
 }) {
   const params = await searchParams;
   const requested = typeof params.sample === "string" ? params.sample : undefined;
-  return <ChatWorkspace sampleId={findSample(requested)?.id} />;
+  return <ChatWorkspace key={findSample(requested)?.id ?? "new"} sampleId={findSample(requested)?.id} />;
 }
