@@ -42,11 +42,27 @@ jobs:
         with:
           node-version: '24'
           package-manager-cache: false
-      - run: npm ci --no-audit --no-fund
+      - run: npm install --no-audit --no-fund
       - run: npm run lint
       - run: npm run typecheck
       - run: npm test
       - run: npm run build
+
+  browser:
+    name: Playwright / desktop & mobile Chromium
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/web
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - run: npm install --no-audit --no-fund
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
 
   database:
     name: PostgreSQL + pgvector smoke
@@ -61,4 +77,3 @@ jobs:
       - name: Tear down
         if: always()
         run: docker compose down -v
-

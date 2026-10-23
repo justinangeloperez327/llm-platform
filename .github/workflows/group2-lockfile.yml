@@ -1,0 +1,27 @@
+name: Group 2 temporary npm lock bootstrap
+on:
+  push:
+    paths:
+      - .github/workflows/group2-lockfile.yml
+permissions:
+  contents: read
+jobs:
+  lockfile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Resolve Group 2 dependencies
+        working-directory: apps/web
+        run: npm install --no-audit --no-fund
+      - name: Report lockfile for commit
+        working-directory: apps/web
+        run: |
+          node - <<'NODE'
+          const fs = require('node:fs');
+          const data = fs.readFileSync('package-lock.json').toString('base64');
+          for (let i = 0; i < data.length; i += 2048) console.log('LOCK_CHUNK:' + data.slice(i, i + 2048));
+          NODE

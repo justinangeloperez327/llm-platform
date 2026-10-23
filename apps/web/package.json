@@ -1,6 +1,6 @@
 {
   "name": "llm-platform-web",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "engines": {"node": ">=24 <25"},
   "scripts": {
@@ -9,7 +9,8 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "next": "16.4.2",
@@ -22,6 +23,7 @@
     "tailwind-merge": "3.3.1"
   },
   "devDependencies": {
+    "@playwright/test": "1.64.1",
     "@tailwindcss/postcss": "4.1.16",
     "@types/node": "24.9.1",
     "@types/react": "19.2.2",
@@ -34,4 +36,3 @@
     "vitest": "3.2.4"
   }
 }
-
