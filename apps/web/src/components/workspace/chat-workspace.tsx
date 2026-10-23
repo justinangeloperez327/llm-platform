@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useCallback, useRef, useState, useSyncExternalStore } from "react";
+import { FormEvent, useRef, useState, useSyncExternalStore } from "react";
 import { ArrowUpRight, Check, FileText, Info, Save, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { draftKey, findSample } from "@/lib/samples";
@@ -12,6 +12,23 @@ const STARTERS = [
   "Show the architecture for a local LLM platform",
 ];
 
+function subscribeToDraft(listener: () => void) {
+  window.addEventListener("storage", listener);
+  window.addEventListener("llm-platform:draft", listener);
+  return () => {
+    window.removeEventListener("storage", listener);
+    window.removeEventListener("llm-platform:draft", listener);
+  };
+}
+
+function readDraft(key: string): string | null {
+  try {
+    return window.localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+
 export function ChatWorkspace({ sampleId }: { sampleId?: string }) {
   const sample = findSample(sampleId);
   const key = draftKey(sample?.id);
@@ -21,22 +38,7 @@ export function ChatWorkspace({ sampleId }: { sampleId?: string }) {
   const textarea = useRef<HTMLTextAreaElement>(null);
   const { preferences } = usePreferences();
 
-  const subscribe = useCallback((listener: () => void) => {
-    window.addEventListener("storage", listener);
-    window.addEventListener("llm-platform:draft", listener);
-    return () => {
-      window.removeEventListener("storage", listener);
-      window.removeEventListener("llm-platform:draft", listener);
-    };
-  }, []);
-  const getSnapshot = useCallback(() => {
-    try {
-      return window.localStorage.getItem(key);
-    } catch {
-      return null;
-    }
-  }, [key]);
-  const persistedDraft = useSyncExternalStore(subscribe, getSnapshot, () => null);
+  const persistedDraft = useSyncExternalStore(subscribeToDraft, () => readDraft(key), () => null);
   const draft = editedDraft ?? persistedDraft ?? "";
 
   function saveDraft(event?: FormEvent<HTMLFormElement>) {
