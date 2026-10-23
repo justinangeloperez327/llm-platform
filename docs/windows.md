@@ -10,7 +10,7 @@ Prerequisites: Node.js **24**, Python **3.12+**, Git, Docker Desktop using WSL2,
 2. Start Docker Desktop and run `docker compose up -d --wait db` from the repo root.
 3. Install backend: `cd services/api; python -m venv .venv; ./.venv/Scripts/python.exe -m pip install -e ".[dev]"`.
 4. Run backend: `./.venv/Scripts/python.exe -m uvicorn app.main:app --reload --port 8000`.
-5. Open another terminal, enter `apps/web`, run `npm install`, then `npm run dev`.
+5. Open another terminal, enter `apps/web`, run `npm ci`, then `npm run dev`.
 6. Visit `http://localhost:3000` and `http://127.0.0.1:8000/api/v1/health`.
 
 Optional inference: install Ollama, run `ollama pull qwen3.5:2b-q4_K_M` and test `ollama run qwen3.5:2b-q4_K_M`. Start at 2048 context tokens. GPU acceleration depends on actual GPU model and driver. Use `ollama ps` to inspect offloading.

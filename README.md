@@ -30,7 +30,7 @@ In another terminal:
 
 ```powershell
 cd llm-platform\apps\web
-npm install
+npm ci
 npm run dev
 ```
 

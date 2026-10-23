@@ -42,9 +42,7 @@ jobs:
         with:
           node-version: '24'
           package-manager-cache: false
-      # First commit cannot include registry-resolved lockfile from disconnected bootstrap environment.
-      # Generate and commit package-lock.json after first successful registry-connected install.
-      - run: npm install --no-audit --no-fund
+      - run: npm ci --no-audit --no-fund
       - run: npm run lint
       - run: npm run typecheck
       - run: npm test

@@ -19,6 +19,6 @@ if (-not (Test-Path ".env")) {
 
 Write-Host "Next: docker compose up -d db"
 Write-Host "Backend: cd services/api; python -m pip install -e '.\[dev]' (or use pip install -e '.[dev]')"
-Write-Host "Frontend: cd apps/web; npm install; npm run dev"
+Write-Host "Frontend: cd apps/web; npm ci; npm run dev"
 Write-Host "Optional Ollama: ollama pull qwen3.5:2b-q4_K_M"
 
