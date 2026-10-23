@@ -1,10 +1,10 @@
 # LLM Platform
 
-**Group 2 complete:** responsive chat drafting workspace, example conversations, browser-local appearance and response-style preferences, desktop/mobile Playwright regression tests. Inference responses are intentionally not available until Group 5. No automatic deployment.
+**Group 3 complete:** Argon2 password hashing, PostgreSQL-backed sessions, secure registration and login, protected chat routes, migration scripts, and end-to-end browser tests. Model inference/chat is still scheduled for Group 5. No automatic deployment.
 
 Windows-first, locally hosted LLM development monorepo.
 
-## Group 1 scope
+## Current development stack
 
 - Next.js 16 / TypeScript frontend on port 3000 (workspace at /chat, settings at /settings)
 - FastAPI backend on port 8000
@@ -21,10 +21,11 @@ Prerequisites: Node.js 24, Python 3.12+, Docker Desktop/WSL2 and optionally Olla
 git clone https://github.com/justinangeloperez327/llm-platform.git
 cd llm-platform
 Copy-Item .env.example .env
-docker compose up -d db
+docker compose up -d --wait db
 cd services/api
 python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -e ".[dev]"
+.\.venv\Scripts\python.exe -m alembic upgrade head
 .\.venv\Scripts\python.exe -m uvicorn app.main:app --reload --port 8000
 ```
 
@@ -36,7 +37,7 @@ npm ci
 npm run dev
 ```
 
-Open http://localhost:3000 and http://127.0.0.1:8000/docs.
+Open http://localhost:3000/register to create a local account, or http://localhost:3000/login to sign in. FastAPI documentation: http://127.0.0.1:8000/docs.
 
 For the optional model smoke test:
 
@@ -45,8 +46,8 @@ ollama pull qwen3.5:2b-q4_K_M
 ollama run qwen3.5:2b-q4_K_M
 ```
 
-The API includes `/api/v1/health` and an opt-in Ollama status endpoint. Chat streaming, authentication and RAG are deferred to later implementation groups.
+The API includes `/api/v1/health` and an opt-in Ollama status endpoint. Chat streaming and RAG are deferred to later groups. Registration and sessions are implemented in Group 3.
 
 **Security:** Local development only. Do not expose PostgreSQL or Ollama publicly or commit real credentials.
 
-See [Windows setup](docs/windows.md), [Group 2 frontend](docs/group-2-frontend.md), [architecture](docs/architecture.md), and [group plan](docs/groups.md).
+See [Windows setup](docs/windows.md), [Group 3 authentication](docs/group-3-auth.md), [Group 2 frontend](docs/group-2-frontend.md), [architecture](docs/architecture.md), and [group plan](docs/groups.md).
