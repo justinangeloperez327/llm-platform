@@ -32,7 +32,7 @@ No membership invitation, file upload, model response or search is exposed by th
 ## Running on Windows
 
 From the repository root, start Docker Desktop and run `docker compose up -d --wait db`.
-From `services/api`, install and execute `python -m alembic upgrade head`, then run `python -m uvicorn app.main:app --reload --port 8000`. The existing Next.js frontend remains on port 3000 and is still a UI preview. The new persistence API is accessible at `http://127.0.0.1:8000/docs` after authenticating with the same-origin application.
+From `services/api`, install and execute `python -m alembic upgrade head`, then run `python -m uvicorn app.main:app --reload --port 8000`. The existing Next.js frontend remains on port 3000 and is still a UI preview. The API can be accessed from the same-origin browser via `/api/workspaces` and nested paths; Next.js proxies those requests to FastAPI. The new persistence API is accessible at `http://127.0.0.1:8000/docs` after authenticating with the same-origin application.
 
 ## Isolation model and limitations
 

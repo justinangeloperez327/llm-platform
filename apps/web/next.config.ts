@@ -9,6 +9,8 @@ const config: NextConfig = {
     // a host-only HttpOnly cookie through this same-origin reverse proxy.
     return [
       { source: "/api/auth/:path*", destination: `${backend}/api/v1/auth/:path*` },
+      { source: "/api/workspaces", destination: `${backend}/api/v1/workspaces` },
+      { source: "/api/workspaces/:path*", destination: `${backend}/api/v1/workspaces/:path*` },
     ];
   },
 };
