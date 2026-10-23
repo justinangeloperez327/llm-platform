@@ -68,6 +68,12 @@ def test_register_creates_cookie_and_me(api: TestClient):
         assert session is not None
         assert session.token_hash == hash_token(token)
         assert token not in session.token_hash
+        from app.data.models import Workspace, WorkspaceMembership
+
+        workspace = db.scalar(select(Workspace).where(Workspace.owner_id == user.id))
+        assert workspace is not None
+        membership = db.get(WorkspaceMembership, (workspace.id, user.id))
+        assert membership is not None and membership.role == "owner"
 
 
 def test_login_logout_and_server_side_revocation(api: TestClient):
@@ -136,4 +142,5 @@ def test_production_requires_secure_cookies():
     with pytest.raises(ValueError, match="SESSION_COOKIE_SECURE"):
         Settings(app_env="production", session_cookie_secure=False)
     assert Settings(app_env="production", session_cookie_secure=True).session_cookie_secure
+
 

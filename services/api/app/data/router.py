@@ -34,21 +34,8 @@ def check_write_origin(request: Request) -> None:
     enforce_origin(request, Settings())
 
 
-def ensure_personal_workspace(db: Session, user: User) -> Workspace:
-    workspace = db.scalar(select(Workspace).where(Workspace.owner_id == user.id))
-    if workspace is None:
-        # This is a fallback for users who registered before Group 4 migrations.
-        workspace = Workspace(owner_id=user.id, name="Personal")
-        db.add(workspace)
-        db.flush()
-        db.add(WorkspaceMembership(workspace_id=workspace.id, user_id=user.id, role="owner"))
-        db.commit()
-    return workspace
-
-
 @router.get("", response_model=list[WorkspaceView])
 def list_workspaces(db: Db, user: CurrentUser, response: Response) -> list[WorkspaceView]:
-    ensure_personal_workspace(db, user)
     rows = db.execute(
         select(Workspace, WorkspaceMembership.role)
         .join(WorkspaceMembership, Workspace.id == WorkspaceMembership.workspace_id)
@@ -160,4 +147,5 @@ def add_user_message(
     db.commit()
     db.refresh(row)
     return row
+
 

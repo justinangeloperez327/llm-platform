@@ -25,6 +25,7 @@ from app.auth.security import (
     utc_now,
 )
 from app.config import Settings
+from app.data.models import Workspace, WorkspaceMembership
 
 router = APIRouter(prefix="/api/v1/auth", tags=["authentication"])
 
@@ -52,6 +53,10 @@ def register(
     db.add(user)
     try:
         db.flush()  # Unique-email constraint is authoritative even on simultaneous requests.
+        workspace = Workspace(owner_id=user.id, name="Personal")
+        db.add(workspace)
+        db.flush()
+        db.add(WorkspaceMembership(workspace_id=workspace.id, user_id=user.id, role="owner"))
         raw = issue_session(db, user, settings)
         db.commit()
     except IntegrityError as exc:
@@ -107,4 +112,5 @@ def logout(
         session.revoked_at = utc_now()
         db.commit()
     clear_session_cookie(response, settings)
+
 

@@ -4,6 +4,7 @@ from alembic import context
 from sqlalchemy import engine_from_config, pool
 
 from app.auth.models import Base
+from app.data import models as data_models  # noqa: F401
 from app.config import Settings
 
 config = context.config
@@ -38,4 +39,5 @@ if context.is_offline_mode():
     run_migrations_offline()
 else:
     run_migrations_online()
+
 

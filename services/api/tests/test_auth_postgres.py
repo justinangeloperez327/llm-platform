@@ -18,7 +18,7 @@ def test_migrated_postgres_and_auth_roundtrip():
     uri = Settings().database_url
     engine = create_engine(uri)
     inspector = inspect(engine)
-    assert {"users", "auth_sessions", "login_attempts"}.issubset(
+    assert {"users", "auth_sessions", "login_attempts", "workspaces", "workspace_memberships", "conversations", "messages", "knowledge_sources"}.issubset(
         set(inspector.get_table_names())
     )
     unique_email = f"ci-{uuid4().hex}@example.com"
@@ -45,4 +45,5 @@ def test_migrated_postgres_and_auth_roundtrip():
         db.delete(user)
         db.commit()
     engine.dispose()
+
 
