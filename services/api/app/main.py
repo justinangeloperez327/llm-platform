@@ -3,8 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from app.auth.router import router as auth_router
-from app.data.router import router as data_router
 from app.config import Settings
+from app.data.router import router as data_router
 from app.inference.ollama import OllamaProvider
 
 settings = Settings()

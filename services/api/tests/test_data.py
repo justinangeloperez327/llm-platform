@@ -11,7 +11,7 @@ from sqlalchemy.pool import StaticPool
 from app.auth.db import get_db
 from app.auth.models import Base
 from app.auth.security import COOKIE_NAME
-from app.data.models import Conversation, KnowledgeSource, Message, Workspace, WorkspaceMembership
+from app.data.models import KnowledgeSource, Message, Workspace, WorkspaceMembership
 from app.main import app
 
 ORIGIN = {"Origin": "http://localhost:3000"}

@@ -79,8 +79,18 @@ jobs:
       - name: Start test PostgreSQL
         working-directory: .
         run: docker compose up -d --wait db
+      - name: Migrate legacy schema
+        run: python -m alembic upgrade 0001_auth
+      - name: Seed pre-Group-4 account
+        working-directory: .
+        run: |
+          docker compose exec -T db psql -U llm_dev -d llm_dev -v ON_ERROR_STOP=1 -c "INSERT INTO users (id, email, display_name, password_hash, created_at) VALUES ('legacy-user-0001', 'legacy-group4@example.com', 'Legacy User', 'not-a-real-hash', NOW())"
       - name: Apply all migrations
         run: python -m alembic upgrade head
+      - name: Verify workspace migration backfill
+        working-directory: .
+        run: |
+          docker compose exec -T db psql -U llm_dev -d llm_dev -v ON_ERROR_STOP=1 -tAc "SELECT count(*) FROM workspaces w JOIN workspace_memberships m ON m.workspace_id=w.id AND m.user_id=w.owner_id WHERE w.owner_id='legacy-user-0001' AND m.role='owner';" | grep -qx '1'
       - name: PostgreSQL auth and tenant-data integration
         env:
           RUN_POSTGRES_AUTH_TEST: "1"
