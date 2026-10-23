@@ -1,9 +1,9 @@
 # Development groups
 
-1. **Foundation (current):** monorepo, frontend shell, FastAPI health, provider contract, pgvector Docker, tests, CI and Windows docs.
-2. Frontend application, navigation and accessibility.
-3. Authentication and session management.
-4. Relational schema, migrations, authorization and tenant boundaries.
+1. Foundation: monorepo, frontend shell, FastAPI health, provider contract, pgvector Docker, tests, CI and Windows docs.
+2. Frontend application: navigation, chat drafting, light/dark preferences and accessible browser tests.
+3. **Authentication (current):** Argon2 registration/login, database sessions, cookie security, UI guards, migrations and tests.
+4. Relational schema, migrations, resource authorization and tenant boundaries.
 5. Chat streaming, cancellations and Ollama/vLLM adapters.
 6. Ingestion pipeline.
 7. Embeddings and vector indexing.

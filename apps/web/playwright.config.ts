@@ -16,8 +16,9 @@ export default defineConfig({
   ],
   webServer: {
     command: "npm run dev -- --hostname 127.0.0.1",
-    url: "http://127.0.0.1:3000/chat",
+    url: "http://127.0.0.1:3000/login",
     timeout: 120_000,
     reuseExistingServer: !process.env.CI,
   },
 });
+

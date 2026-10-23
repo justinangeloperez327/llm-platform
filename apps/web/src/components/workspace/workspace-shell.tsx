@@ -10,6 +10,7 @@ import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { SAMPLE_CONVERSATIONS } from "@/lib/samples";
 import { cn } from "@/lib/utils";
 import { PreferencesProvider, usePreferences } from "./preferences-provider";
+import { LogoutButton } from "@/components/auth/logout-button";
 
 function Navigation({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
@@ -74,6 +75,7 @@ function Navigation({ onNavigate }: { onNavigate?: () => void }) {
         >
           <Settings2 className="size-4" aria-hidden="true" /> Settings
         </Link>
+        <LogoutButton />
         <p className="mt-4 px-3 text-[11px] leading-relaxed text-slate-500 dark:text-slate-500">
           Preview-only UI. Backend model chat will arrive in Group 5.
         </p>
@@ -179,3 +181,4 @@ function ShellContent({ children }: { children: React.ReactNode }) {
 export function WorkspaceShell({ children }: { children: React.ReactNode }) {
   return <PreferencesProvider><ShellContent>{children}</ShellContent></PreferencesProvider>;
 }
+

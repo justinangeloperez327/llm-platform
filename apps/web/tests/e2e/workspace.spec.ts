@@ -1,5 +1,22 @@
 import { expect, test } from "@playwright/test";
 
+const fakeUser = {
+  id: "playwright-user-id",
+  email: "tester@example.com",
+  display_name: "Browser Tester",
+  created_at: "2026-10-23T10:00:00Z",
+};
+
+test.beforeEach(async ({ page }) => {
+  await page.context().addCookies([{
+    name: "llm_session", value: "browser-test-session",
+    url: "http://127.0.0.1:3000", httpOnly: true, sameSite: "Lax",
+  }]);
+  await page.route("**/api/auth/me", async (route) => {
+    await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(fakeUser) });
+  });
+});
+
 test("chat preview does not pretend an AI model is connected", async ({ page }) => {
   await page.goto("/chat");
   await expect(page.getByRole("heading", { name: "What would you like to explore?" })).toBeVisible();
@@ -43,3 +60,4 @@ test("sample conversation is clearly marked as illustrative", async ({ page }) =
   await expect(page.getByRole("heading", { name: "Understanding RAG" })).toBeVisible();
   await expect(page.getByText("Illustrative answer (not generated)")).toBeVisible();
 });
+
