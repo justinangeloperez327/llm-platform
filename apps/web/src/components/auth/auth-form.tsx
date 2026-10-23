@@ -2,13 +2,11 @@
 
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { BrainCircuit, Eye, EyeOff, LockKeyhole, LogIn, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { readableAuthError, validPassword } from "@/lib/auth";
 
 export function AuthForm({ mode }: { mode: "login" | "register" }) {
-  const router = useRouter();
   const registration = mode === "register";
   const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");

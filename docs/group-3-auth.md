@@ -46,3 +46,5 @@ Visit /register to create your first account, then /chat.
 - No OAuth or external providers enabled.
 - Database migrations are explicit; backend never silently creates tables at startup.
 
+
+CI also runs Alembic migrations and a real registration/session revocation round trip against PostgreSQL.

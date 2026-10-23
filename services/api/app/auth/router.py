@@ -1,3 +1,5 @@
+from typing import Annotated
+
 from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
@@ -27,8 +29,13 @@ from app.config import Settings
 router = APIRouter(prefix="/api/v1/auth", tags=["authentication"])
 
 
+
 def get_settings() -> Settings:
     return Settings()
+
+
+Db = Annotated[Session, Depends(get_db)]
+Configured = Annotated[Settings, Depends(get_settings)]
 
 
 @router.post("/register", response_model=PublicUser, status_code=201)
@@ -36,8 +43,8 @@ def register(
     payload: RegisterPayload,
     request: Request,
     response: Response,
-    db: Session = Depends(get_db),
-    settings: Settings = Depends(get_settings),
+    db: Db,
+    settings: Configured,
 ) -> User:
     enforce_origin(request, settings)
     email = normalize_email(str(payload.email))
@@ -59,8 +66,8 @@ def login(
     payload: LoginPayload,
     request: Request,
     response: Response,
-    db: Session = Depends(get_db),
-    settings: Settings = Depends(get_settings),
+    db: Db,
+    settings: Configured,
 ) -> User:
     enforce_origin(request, settings)
     email = normalize_email(str(payload.email))
@@ -78,7 +85,7 @@ def login(
 
 
 @router.get("/me", response_model=PublicUser)
-def me(request: Request, response: Response, db: Session = Depends(get_db)) -> User:
+def me(request: Request, response: Response, db: Db) -> User:
     session = current_session(request, db)
     response.headers["Cache-Control"] = "no-store"
     return session.user
@@ -88,14 +95,14 @@ def me(request: Request, response: Response, db: Session = Depends(get_db)) -> U
 def logout(
     request: Request,
     response: Response,
-    db: Session = Depends(get_db),
-    settings: Settings = Depends(get_settings),
+    db: Db,
+    settings: Configured,
 ) -> None:
     enforce_origin(request, settings)
     try:
-        session: AuthSession = current_session(request, db)
+        session: AuthSession | None = current_session(request, db)
     except HTTPException:
-        session = None  # type: ignore[assignment]
+        session = None
     if session is not None:
         session.revoked_at = utc_now()
         db.commit()

@@ -1,8 +1,9 @@
 import hashlib
 import secrets
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
-from argon2 import PasswordHasher, exceptions as argon_errors
+from argon2 import PasswordHasher
+from argon2 import exceptions as argon_errors
 from fastapi import HTTPException, Request, Response, status
 from sqlalchemy import delete, func, select
 from sqlalchemy.orm import Session
@@ -38,12 +39,12 @@ def password_matches(password: str, encoded: str) -> bool:
 
 
 def utc_now() -> datetime:
-    return datetime.now(timezone.utc)
+    return datetime.now(UTC)
 
 
 def aware(dt: datetime) -> datetime:
     # SQLite returns naive datetimes even for DateTime(timezone=True).
-    return dt if dt.tzinfo else dt.replace(tzinfo=timezone.utc)
+    return dt if dt.tzinfo else dt.replace(tzinfo=UTC)
 
 
 def enforce_origin(request: Request, settings: Settings) -> None:
@@ -98,7 +99,7 @@ def current_session(request: Request, db: Session) -> AuthSession:
 def attempt_identity(request: Request, email: str) -> str:
     # Never trust user-provided X-Forwarded-For; the trusted reverse proxy owns this later.
     peer = request.client.host if request.client else "unknown"
-    return hashlib.sha256(f"{peer}:{normalize_email(email)}".encode("utf-8")).hexdigest()
+    return hashlib.sha256(f"{peer}:{normalize_email(email)}".encode()).hexdigest()
 
 
 def deny_if_limited(db: Session, identity: str) -> None:
