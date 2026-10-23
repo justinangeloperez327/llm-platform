@@ -9,7 +9,7 @@ Prerequisites: Node.js **24**, Python **3.12+**, Git, Docker Desktop using WSL2,
 1. Clone this repository, then in PowerShell run: `./scripts/windows/bootstrap.ps1`.
 2. Start Docker Desktop and run `docker compose up -d --wait db` from the repo root.
 3. Install backend: `cd services/api; python -m venv .venv; ./.venv/Scripts/python.exe -m pip install -e ".[dev]"`.
-4. Apply database migration: `./.venv/Scripts/python.exe -m alembic upgrade head`.
+4. Apply all database migrations (including Group 4): `./.venv/Scripts/python.exe -m alembic upgrade head`.
 5. Run backend: `./.venv/Scripts/python.exe -m uvicorn app.main:app --reload --port 8000`.
 6. Open another terminal, enter `apps/web`, run `npm ci`, then `npm run dev`.
 7. Visit `http://localhost:3000/register` to create an account. FastAPI health: `http://127.0.0.1:8000/api/v1/health`.

@@ -12,6 +12,7 @@ class WorkspaceView(BaseModel):
 
 
 class ConversationCreate(BaseModel):
+    model_config = ConfigDict(extra="forbid")
     title: str = Field(min_length=1, max_length=200, strict=True)
 
 
@@ -30,6 +31,7 @@ class ConversationView(BaseModel):
 
 
 class MessageCreate(BaseModel):
+    model_config = ConfigDict(extra="forbid")
     # Only human-written messages are accepted in Group 4.
     content: str = Field(min_length=1, max_length=20000, strict=True)
 

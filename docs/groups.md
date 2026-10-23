@@ -2,8 +2,8 @@
 
 1. Foundation: monorepo, frontend shell, FastAPI health, provider contract, pgvector Docker, tests, CI and Windows docs.
 2. Frontend application: navigation, chat drafting, light/dark preferences and accessible browser tests.
-3. **Authentication (current):** Argon2 registration/login, database sessions, cookie security, UI guards, migrations and tests.
-4. Relational schema, migrations, resource authorization and tenant boundaries.
+3. Authentication: Argon2 registration/login, database sessions, cookie security, UI guards, migrations and tests.
+4. **Tenant data and authorization (current):** workspaces, membership roles, conversations, messages, source metadata and tenant isolation.
 5. Chat streaming, cancellations and Ollama/vLLM adapters.
 6. Ingestion pipeline.
 7. Embeddings and vector indexing.

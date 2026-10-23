@@ -1,6 +1,6 @@
 # LLM Platform
 
-**Group 3 complete:** Argon2 password hashing, PostgreSQL-backed sessions, secure registration and login, protected chat routes, migration scripts, and end-to-end browser tests. Model inference/chat is still scheduled for Group 5. No automatic deployment.
+**Group 4 data foundation:** Argon2 authentication plus tenant-aware workspaces, database conversation/message persistence, access policies and two Alembic migrations. Model inference/chat is still scheduled for Group 5. No automatic deployment.
 
 Windows-first, locally hosted LLM development monorepo.
 
@@ -46,8 +46,8 @@ ollama pull qwen3.5:2b-q4_K_M
 ollama run qwen3.5:2b-q4_K_M
 ```
 
-The API includes `/api/v1/health` and an opt-in Ollama status endpoint. Chat streaming and RAG are deferred to later groups. Registration and sessions are implemented in Group 3.
+The API includes `/api/v1/health`, `/api/v1/workspaces` and an optional Ollama status endpoint. Chat streaming and RAG are deferred to later groups. Registration and sessions are implemented in Group 3.
 
 **Security:** Local development only. Do not expose PostgreSQL or Ollama publicly or commit real credentials.
 
-See [Windows setup](docs/windows.md), [Group 3 authentication](docs/group-3-auth.md), [Group 2 frontend](docs/group-2-frontend.md), [architecture](docs/architecture.md), and [group plan](docs/groups.md).
+See [Group 4 data model](docs/group-4-data.md), [Windows setup](docs/windows.md), [Group 3 authentication](docs/group-3-auth.md), [Group 2 frontend](docs/group-2-frontend.md), [architecture](docs/architecture.md), and [group plan](docs/groups.md).

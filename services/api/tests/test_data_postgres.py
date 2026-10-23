@@ -58,12 +58,15 @@ def test_tenant_isolation_on_migrated_postgresql():
         assert db.scalar(select(Conversation).where(Conversation.id == conv)) is not None
         assert db.get(WorkspaceMembership, (ws_alice, alice)) is not None
         assert db.get(WorkspaceMembership, (ws_bob, bob)) is not None
+        # Delete conversations before users because created_by is ON DELETE RESTRICT.
+        stored = db.get(Conversation, conv)
+        assert stored is not None
+        db.delete(stored)
+        db.flush()
         for email in (alice_email, bob_email):
             user = db.scalar(select(User).where(User.email == email))
             assert user is not None
             db.delete(user)
-        # Foreign key ON DELETE RESTRICT for created_by requires deleting conversations first.
-        db.delete(db.get(Conversation, conv))
         db.commit()
         assert db.scalar(select(Workspace).where(Workspace.id == ws_alice)) is None
         assert db.scalar(select(Message).where(Message.conversation_id == conv)) is None

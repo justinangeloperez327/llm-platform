@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "llm-platform-api"
-version = "0.3.0"
-description = "FastAPI backend, secure user authentication and inference contracts"
+version = "0.4.0"
+description = "FastAPI backend, tenant-scoped data, session auth and inference contracts"
 requires-python = ">=3.12"
 dependencies = [
   "fastapi>=0.120,<1",

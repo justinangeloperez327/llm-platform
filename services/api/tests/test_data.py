@@ -181,7 +181,7 @@ def test_no_auth_origin_and_input_validation(context):
     assert client.post(f"{base}/{cid}/messages", headers=ORIGIN,
                        json={"content": "x" * 20001}).status_code == 422
     assert client.post(f"{base}/{cid}/messages", headers=ORIGIN,
-                       json={"content": "fake", "role": "assistant"}).status_code == 201
+                       json={"content": "fake", "role": "assistant"}).status_code == 422
 
 
 def test_composite_fk_rejects_cross_workspace_message(context):

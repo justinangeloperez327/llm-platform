@@ -11,7 +11,7 @@ def test_health_is_available_without_database_or_gpu() -> None:
     assert result.json() == {
         "status": "ok",
         "service": "llm-platform-api",
-        "version": "0.3.0",
+        "version": "0.4.0",
     }
 
 

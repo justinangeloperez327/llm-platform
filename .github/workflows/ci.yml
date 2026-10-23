@@ -79,9 +79,9 @@ jobs:
       - name: Start test PostgreSQL
         working-directory: .
         run: docker compose up -d --wait db
-      - name: Apply auth migrations
+      - name: Apply all migrations
         run: python -m alembic upgrade head
-      - name: PostgreSQL auth integration
+      - name: PostgreSQL auth and tenant-data integration
         env:
           RUN_POSTGRES_AUTH_TEST: "1"
         run: python -m pytest -q -m postgres
